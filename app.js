@@ -32,9 +32,7 @@ autoIncrement.initialize(connection);
 var Model = require('./client/model');
 
 
-var Order = mongoose.model('Order'),
-    Vendor = mongoose.model('Vendor'),
-    Employee = mongoose.model('Employee');
+var Employee = mongoose.model('Employee');
     
 // configure app to use bodyParser()
 // this will let us get the data from a POST

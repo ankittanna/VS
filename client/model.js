@@ -65,7 +65,9 @@ var EmployeeSchema = new Schema({
 
 var IndustriesSchema = new Schema({
     id: {
-        type: Number
+        type: Number,
+        required: true,
+        default: 0
     },
     name: {
         type: String,
@@ -99,19 +101,24 @@ var IndustriesSchema = new Schema({
 
 var StoreSchema = new Schema({
   id: {
-    type: Number
+    type: Number,
+      required: true,
+      default: 0
   },
   name: {
       type: String,
-      default: ''
+      default: '',
+      required: true
   },
     subIndustries: {
       type: Array,
-        default: []
+        default: [],
+        required: true
     },
     logoUrl: {
       type: String,
-        default: ''
+        default: '',
+        required: true
     },
     themeUrl: {
       type: String,
@@ -141,65 +148,21 @@ var MenuItemSchema = new Schema({
   }
 });
 
-
-var VendorSchema = new Schema({
-  name: {
-    type: String,
-    default: ''
-  },
-  phonenumber: Number,
-  emailid: String, 
-  role: {
-  	 type: String,
-     default: 'Vendor'
-  },
-  location:{
-  	type: String,
-    default: 'PDC1'
-  },
-  imgname: String,  
-  deviceid: {
-    type: String,
-    default: ''
-  }, 
-  menu: [MenuItemSchema]
-});
-
-
-var OrderSchema = new Schema({
-  ordernumber: {type: Number},
-  orderto: String,
-  orderby: String,
-  ordertoname: String,
-  orderbyname: String,
-  ordertophoneno: Number,
-  orderbyphoneno: Number,
-  totalCost: Number,
-  ordertime: { type: Date, default: Date.now },
-  ordereditems: [MenuItemSchema],
-  status: {
-  	type: String,
-  	default: 'Order in Queue'
-  }
-  
-});
-
-OrderSchema.pre('save', function(next) {
-    var doc = this;
-       sequence.next(function(nextSeq){
-       doc.ordernumber = nextSeq;
-    next();
-  });
-});
-
 var Employee = mongoose.model('Employee', EmployeeSchema);
-var Vendor  = mongoose.model('Vendor', VendorSchema);
-var Order = mongoose.model('Order', OrderSchema);
 var Industries = mongoose.model('Industries', IndustriesSchema);
 
 StoreSchema.plugin(autoIncrement.plugin, {
   model: 'Store',
     field: 'id',
+    startAt: 1,
     incrementBy: 1
 });
+
+IndustriesSchema.plugin(autoIncrement.plugin, {
+    model: 'Industries',
+    field: 'id',
+    startAt: 1,
+    incrementBy: 1
+});
+
 var Store = mongoose.model('Stores', StoreSchema);

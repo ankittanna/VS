@@ -5,7 +5,6 @@
  */
 var path = require('path'),
 	  mongoose = require('mongoose'),
-	  Order = mongoose.model('Order'),
 	  Industries = mongoose.model('Industries'),
 	  http = require('http'),
 	  Employee = mongoose.model('Employee');
@@ -193,7 +192,7 @@ exports.deleteEmployee= function (req, res) {
 };
 
 
-exports.orderListForEmp = function (req, res) {
+/*exports.orderListForEmp = function (req, res) {
   Order.find(req.query).sort('-created').exec(function (err, orders) {
     if (err) {
       return res.status(400).send({
@@ -309,31 +308,69 @@ exports.updateOrder = function (req, res) {
 
 exports.deleteOrder= function (req, res) {
  Order.remove().exec();
-};
+};*/
 
 exports.getIndustries = function (req, res) {
-    Industries.find({ isActive: true }).exec(function (err, industries) {
-        if (err) {
-            return res.status(400).send({
-                message: "Internal Error"
-            });
-        } else {
-            res.json(industries);
-        }
-    });
+    console.log('********** GET INDUSTRIES ********** ' + typeof req.param.activeOnly);
+    if(typeof req.query.activeOnly !== undefined && req.query.activeOnly === 'true')
+    {
+        Industries.find({isActive: true}).exec(function (err, industries) {
+            if (err) {
+                return res.status(400).send({
+                    message: "Internal Error"
+                });
+            } else {
+                console.log("Number of industries: " + industries.length);
+                res.json(industries);
+            }
+        });
+    } else if(req.query.activeOnly === 'false' || !req.query.activeOnly) {
+        Industries.find().exec(function (err, industries) {
+            if (err) {
+                return res.status(400).send({
+                    message: "Internal Error"
+                });
+            } else {
+                console.log("Number of industries: " + industries.length);
+                res.json(industries);
+            }
+        });
+    }
 };
 
 exports.activateIndustry = function (req, res) {
-    if (req.query.id !== '' && !!req.query.id) {
-        var industryQuery = req.body.industry;
-
-        Industries.findOneAndUpdate({id: req.query.id}, industryQuery, function(err, doc){
-            if (err) return res.send(500, { error: err });
-            return res.send("succesfully saved");
+    if (req.query.id !== '') {
+        Industries.update({ name: req.query.store.toString() }, { $set: { isActive: true}}, function (err, industry) {
+            if (err) {
+                return res.status(400).send({
+                    message: "Internal Error"
+                });
+            } else {
+                res.json(industry);
+            }
         });
     } else {
-        /*res.json();*/
+        return res.status(404).send({
+            message: "Store not found"
+        });
+    }
+};
 
+exports.deactivateIndustry = function (req, res) {
+    if (req.query.id !== '') {
+        Industries.update({ name: req.query.store.toString() }, { $set: { isActive: false}}, function (err, industry) {
+            if (err) {
+                return res.status(400).send({
+                    message: "Internal Error"
+                });
+            } else {
+                res.json(industry);
+            }
+        });
+    } else {
+        return res.status(404).send({
+            message: "Store not found"
+        });
     }
 };
 
@@ -348,7 +385,7 @@ exports.addIndustry = function (req, res) {
                 res.send("Store already exist");
             } else {
                 var store = new Industries(req.body);
-
+                console.log(req.body);
                 if (!req.body.name) {
                     res.send("Store must have a name");
                 } else if (!req.body.logoUrl) {
