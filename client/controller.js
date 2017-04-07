@@ -6,6 +6,7 @@
 var path = require('path'),
 	  mongoose = require('mongoose'),
 	  Industries = mongoose.model('Industries'),
+      Products = mongoose.model('Products'),
 	  http = require('http'),
 	  Employee = mongoose.model('Employee');
   //errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
@@ -311,7 +312,7 @@ exports.deleteOrder= function (req, res) {
 };*/
 
 exports.getIndustries = function (req, res) {
-    console.log('********** GET INDUSTRIES ********** ' + typeof req.param.activeOnly);
+    console.log('********** GET INDUSTRIES ********** ' + typeof req.query.activeOnly);
     if(typeof req.query.activeOnly !== undefined && req.query.activeOnly === 'true')
     {
         Industries.find({isActive: true}).exec(function (err, industries) {
@@ -406,4 +407,27 @@ exports.addIndustry = function (req, res) {
             }
         }
     });
+};
+
+exports.getProducts = function (req, res) {
+    console.log('********** GET PRODUCTS ********** ' + req.params.storeId);
+    if (!!req.params.storeId) {
+        Products.find().exec(function (err, products) {
+            var filteredProducts = [], productsResponse;
+            products.forEach(function (val) {
+                if (val.stores.indexOf(req.params.storeId) !== -1) {
+                    filteredProducts.push(val)
+                }
+            });
+
+            productsResponse = {
+                products: products
+            };
+            res.json(productsResponse);
+        });
+    } else {
+        return res.status(500).send({
+            message: "Cannot find the industry"
+        });
+    }
 };

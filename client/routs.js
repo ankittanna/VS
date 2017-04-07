@@ -26,6 +26,9 @@ module.exports = function (app) {
 
     app.route('/api/industry/deactivate')
         .put(virtualStore.deactivateIndustry);
+
+    app.route('/api/products/:storeId')
+        .get(virtualStore.getProducts);
   /*// Articles collection routes
   app.route('/api/vendors').all(emppandaPolicy.isAllowed)
     .get(emppanda.listVendors)

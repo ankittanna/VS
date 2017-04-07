@@ -138,6 +138,74 @@ var StoreSchema = new Schema({
     }
 });
 
+var ProductsSchema = new Schema({
+    id: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    name: {
+        type: String,
+        default: ''
+    },
+    model: {
+        type: String,
+        default: ''
+    },
+    objectModel: {
+        type: String,
+        default: ''
+    },
+    objectTextures: {
+        type: Array,
+        default: []
+    },
+    price: {
+        type: String,
+        default: '$0'
+    },
+    thumbnail: {
+        type: String,
+        default: ''
+    },
+    accessories: {
+        type: Array,
+        default: []
+    },
+    description: {
+        type: String,
+        default: ''
+    },
+    videos: {
+        type: Array,
+        default: []
+    },
+    offers: {
+        type: Array,
+        default: []
+    },
+    features: {
+        type: Array,
+        default: []
+    },
+    tags: {
+        type: Array,
+        default: []
+    },
+    departments: {
+        type: Array,
+        default: []
+    },
+    stores: {
+        type: Array,
+        default: []
+    },
+    creationDate: {
+        type: String,
+        default: ''
+    }
+});
+
 var MenuItemSchema = new Schema({
  itemname: String,
  category: String,
@@ -150,6 +218,7 @@ var MenuItemSchema = new Schema({
 
 var Employee = mongoose.model('Employee', EmployeeSchema);
 var Industries = mongoose.model('Industries', IndustriesSchema);
+var Products = mongoose.model('Products', ProductsSchema);
 
 StoreSchema.plugin(autoIncrement.plugin, {
   model: 'Store',
